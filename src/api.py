@@ -1,11 +1,11 @@
 import base64
 import logging
 import os
+from typing import List
 
-from typing import Union, List
 from requests import Session, post
+
 from objects.song import Song
-from objects.features import Feature
 
 
 class API:
@@ -69,7 +69,6 @@ class API:
                 logging.warning(f"{keyname} should have 2 lines")
 
             for _, line in zip(range(2), lines):
-
                 if len(line) != 33:  # 32 + \n
                     logging.critical("Client id and client secret must have 32 chars")
                     raise ValueError("Client id and client secret must have 32 chars")

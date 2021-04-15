@@ -1,4 +1,5 @@
 import os
+
 import mutagen
 
 from objects.song import Song
@@ -40,3 +41,12 @@ def load_file(track_path: str) -> Song:
     year = int(file["year"][0])
 
     return Song(title, artist, album, year, os.path.abspath(track_path))
+
+
+def create_playlist(musics: list, filename: str):
+    playlist = open(filename, "w")
+
+    for music in musics:
+        playlist.write(f"{music['path']}\n")
+
+    playlist.close()

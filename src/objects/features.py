@@ -99,7 +99,6 @@ class Feature:
     def __iter__(self):
         return FeaturesIterator(self)
 
-    @property
     def keys(self) -> list:
         """
         Use to get the available keys
@@ -108,6 +107,16 @@ class Feature:
             The list containing the keys
         """
         return self._keys
+
+    def items(self):
+        """
+        Get a list of all the items available
+
+        Returns:
+            The list containing the items
+        """
+        for key in self._keys:
+            yield self.__dict__[f"_{key}"]
 
 
 class FeaturesIterator:
