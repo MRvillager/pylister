@@ -1,8 +1,11 @@
 import os
-
+import re
 import mutagen
 
+from typing import List
 from objects.song import Song
+
+FILE_FORMATS = [".mp3", ".flac", ".ogg"]
 
 
 def load_folder(track_dir: str) -> list:
@@ -22,7 +25,21 @@ def load_folder(track_dir: str) -> list:
 def list_files(track_dir: str) -> list:
     for path, subdirs, files in os.walk(track_dir):
         for name in files:
-            yield os.path.join(path, name)
+            if os.path.splitext(name)[1] in FILE_FORMATS:
+                yield os.path.join(path, name)
+
+
+def load_files(files: List[str]) -> list:
+    """
+    Load and parse all the files
+    Args:
+        files: a list of files to parse
+
+    Returns:
+        a list containing the Music Objects
+    """
+    for file in files:
+        yield load_file(file)
 
 
 def load_file(track_path: str) -> Song:
@@ -35,10 +52,32 @@ def load_file(track_path: str) -> Song:
         A Music Object created from the file
     """
     file = mutagen.File(track_path)
+
     title = str(file["title"][0])
+
     album = str(file["album"][0])
-    artist = str(file["albumartist"][0])
-    year = int(file["year"][0])
+
+    try:
+        artist = ", ".join(file["artist"])
+    except KeyError:
+        try:
+            artist = str(file["albumartist"][0])
+        except KeyError:
+            artist = str(file["artist"][0])
+
+    try:
+        year = int(file["year"][0])
+    except KeyError:
+        try:
+            date = file["date"][0].split("-")
+            year = 0
+            for elem in date:
+                if len(elem) == 4:
+                    year = int(elem)
+        except KeyError:
+            rx_str = "(\\d\\d\\d\\d)"
+            cp = file["copyright"][0]
+            year = int(re.search(rx_str, cp).group(0))
 
     return Song(title, artist, album, year, os.path.abspath(track_path))
 

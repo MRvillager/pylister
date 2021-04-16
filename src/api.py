@@ -151,8 +151,11 @@ class API:
 
         data = response.json()["audio_features"]
 
-        for i in range(len(tracks)):
-            tracks[i].set_features(data[i])
+        for track in tracks:  # This is solution it's extremely slow. TODO: found an alternative
+            for feature in data:
+                if feature["id"] == track["spotify_id"]:
+                    track.set_features(data.pop(data.index(feature)))
+                    break
 
     def analysis(self, track: Song) -> None:
         """

@@ -1,6 +1,7 @@
 import logging
 from typing import Union
 
+from .analysis import Analysis
 from .features import Feature
 
 
@@ -14,7 +15,7 @@ class Song:
     _spotify_id = None
 
     _features = None
-    _analysis = {}
+    _analysis = None
 
     _keys = [
         "title",
@@ -27,15 +28,11 @@ class Song:
         "analysis",
     ]
 
-    def __init__(self, title: str, albumartist: str, album: str, year: Union[str, int], path: str,
-                 spotify_id: str = None, features: dict = None, analysis: dict = None):
-        if analysis is None:
-            analysis = {}
-        if features is None:
-            features = {}
+    def __init__(self, title: str, artist: str, album: str, year: Union[str, int], path: str,
+                 spotify_id: str = None, features: Feature = None, analysis: Analysis = None):
 
         self._title = title
-        self._artist = albumartist  # loads albumartist instead of artist because it's assured to be only one
+        self._artist = artist
         self._album = album
         self._year = year
 
@@ -155,6 +152,9 @@ class Song:
         del data["track_href"]
         del data["analysis_url"]
         self._features = Feature(**data)
+
+    def set_analysis(self, data: dict) -> None:
+        raise NotImplementedError()
 
 
 class MusicIterator:
