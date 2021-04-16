@@ -46,18 +46,9 @@ def load(path: str = None) -> List[Song]:
 def load_with_pickle() -> List[Song]:
     with open(PICKLE, "rb") as data:
         logging.info("Loading already serialized dataset")
-        songs = pickle.load(data)
+        songs = pickle.load(data, encoding="utf-8")
 
-    # List paths
-    path = input("Where should I search for music files? ")
-    files = list(load_folder(path))
-
-    logging.info("Checking data")
-
-    if len(files) != len(songs):
-        logging.warning("New files found. Regenerating data set")
-
-    return load(path)
+    return songs
 
 
 def run():

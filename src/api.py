@@ -153,9 +153,14 @@ class API:
 
         for track in tracks:  # This is solution it's extremely slow. TODO: found an alternative
             for feature in data:
-                if feature["id"] == track["spotify_id"]:
-                    track.set_features(data.pop(data.index(feature)))
-                    break
+                try:
+                    if feature["id"] == track["spotify_id"]:
+                        track.set_features(data.pop(data.index(feature)))
+                        break
+                except TypeError:
+                    pass
+                    # logging.warning(f"Cannot check {feature} when looping on {track['title']} - {track['artist']}"
+                    #                f"Maybe it's already claimed")
 
     def analysis(self, track: Song) -> None:
         """

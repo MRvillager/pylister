@@ -83,7 +83,7 @@ def load_file(track_path: str) -> Song:
 
 
 def create_playlist(musics: list, filename: str):
-    playlist = open(filename, "w")
+    playlist = open(filename, "w", encoding="utf-8")
 
     for music in musics:
         playlist.write(f"{music['path']}\n")
