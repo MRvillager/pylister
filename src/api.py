@@ -118,13 +118,12 @@ class API:
                             f"{response.content}")
             raise ValueError(f"Search request failed.")
 
-        id = response.json()["tracks"]["items"][0]["id"]
-        print(id)
+        spotify_id = response.json()["tracks"]["items"][0]["id"]
 
-        if id is None or len(id) != 22:
+        if spotify_id is None or len(spotify_id) != 22:
             logging.critical(f"id is wrong for {track['title']} - {track['artist']}")
 
-        track["spotify_id"] = id
+        track["spotify_id"] = spotify_id
 
     def feature_bulk(self, tracks: List[Song]) -> None:
         """

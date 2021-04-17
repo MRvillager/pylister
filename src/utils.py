@@ -86,7 +86,7 @@ def load_file(track_path: str) -> Song:
         try:
             # Extract year from date string
             rx_str = "(\\d\\d\\d\\d)"
-            date = file["date"][0].split("-")
+            date = file["date"][0]
             year = int(re.search(rx_str, date).group(0))
         except KeyError:
             # Extract year from copyright string
