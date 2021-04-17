@@ -1,0 +1,4 @@
+requests~=2.25.1
+numpy~=1.20.2
+mutagen~=1.45.1
+scikit-learn~=0.24.1

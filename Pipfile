@@ -8,6 +8,7 @@ requests = "*"
 fastapi = "*"
 mutagen = "*"
 music = "*"
+scikit-learn = "==0.24.1"
 
 [dev-packages]
 

@@ -1,17 +1,25 @@
 import logging
 import os
 import pickle
-import api
-
 from typing import List
 
+import api
+from clustering import cluster
 from objects.song import Song
-from utils import load_folder, create_playlist, list_files
+from utils import load_folder, create_playlist
 
 PICKLE = "../dump.pickle"
 
 
 def load(path: str = None) -> List[Song]:
+    """
+    Given a dir, creates a list of Song objects using found music files
+    Args:
+        path: the directory to search in
+
+    Returns:
+        A list of Song objects
+    """
     logging.info("Creating dataset")
 
     # Load and parse files
@@ -24,11 +32,16 @@ def load(path: str = None) -> List[Song]:
     spotipy = api.API()
     for music in musics:
         try:
-            spotipy.search(music)
+            spotipy.search(music, True)
         except IndexError:
-            logging.warning(f"{music['title']} - {music['artist']} not found. Skipping {music['path']}")
-            musics.remove(music)
-            continue
+            try:
+                spotipy.search(music)
+            except IndexError:
+                logging.warning(f"{music['title']} - {music['artist']} not found. Skipping {music['path']}")
+                musics.remove(music)
+                continue
+        if music["spotify_id"] is None:
+            logging.error("error")
     logging.info("Completed spotify ids retrieving")
 
     # Get music features
@@ -44,6 +57,11 @@ def load(path: str = None) -> List[Song]:
 
 
 def load_with_pickle() -> List[Song]:
+    """
+    Load a pickle file
+    Returns:
+        A list of Song objects
+    """
     with open(PICKLE, "rb") as data:
         logging.info("Loading already serialized dataset")
         songs = pickle.load(data, encoding="utf-8")
@@ -52,13 +70,21 @@ def load_with_pickle() -> List[Song]:
 
 
 def run():
+    """
+    Main function of the program
+    Returns:
+        None
+    """
     if os.path.isfile(PICKLE):
         songs = load_with_pickle()
     else:
         songs = load()
 
+    logging.info("Clustering")
+    clusters = cluster(songs)
+
     logging.info("Creating playlist")
-    create_playlist(songs, "../lol.m3u")
+    create_playlist(clusters, "../lol.m3u")
 
     logging.info("Complete")
 

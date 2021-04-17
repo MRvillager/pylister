@@ -96,16 +96,20 @@ class API:
 
         self.session.headers = token_header
 
-    def search(self, track: Song) -> None:
+    def search(self, track: Song, isrc: bool = False) -> None:
         """
         Search a song using the Spotify Web API
         Args:
             track: the Song Object representing the track to search
+            isrc: use or not the isrc to search the song on spotify
 
         Returns:
             None
         """
-        query = f"{track['title']}%20artist:{track['artist']}%20year:{track['year']}&type=track"
+        if isrc and track['isrc'] is not None:
+            query = f"isrc:{track['isrc']}&type=track"
+        else:
+            query = f"{track['title']}%20artist:{track['artist']}%20year:{track['year']}&type=track"
         url = f"{self._SEARCH_URL}?q={query}"
 
         response = self.session.get(url=url)
@@ -114,8 +118,13 @@ class API:
                             f"{response.content}")
             raise ValueError(f"Search request failed.")
 
-        data = response.json()["tracks"]["items"][0]
-        track.set_spotipy_id(data)
+        id = response.json()["tracks"]["items"][0]["id"]
+        print(id)
+
+        if id is None or len(id) != 22:
+            logging.critical(f"id is wrong for {track['title']} - {track['artist']}")
+
+        track["spotify_id"] = id
 
     def feature_bulk(self, tracks: List[Song]) -> None:
         """
@@ -151,16 +160,15 @@ class API:
 
         data = response.json()["audio_features"]
 
-        for track in tracks:  # This is solution it's extremely slow. TODO: found an alternative
-            for feature in data:
-                try:
-                    if feature["id"] == track["spotify_id"]:
-                        track.set_features(data.pop(data.index(feature)))
-                        break
-                except TypeError:
-                    pass
-                    # logging.warning(f"Cannot check {feature} when looping on {track['title']} - {track['artist']}"
-                    #                f"Maybe it's already claimed")
+        for i in range(len(tracks)):
+            track = tracks[i]
+            feature = data[i]
+
+            if feature is None:
+                logging.critical(f"Features for {track['title']} - {track['artist']} are None")
+                continue
+
+            track.set_features(feature)
 
     def analysis(self, track: Song) -> None:
         """
