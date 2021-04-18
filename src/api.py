@@ -159,12 +159,16 @@ class API:
 
         data = response.json()["audio_features"]
 
-        for i in range(len(tracks)):
-            track = tracks[i]
+        for track in tracks:
+            i = tracks.index(track)
             feature = data[i]
 
             if feature is None:
-                logging.critical(f"Features for {track['title']} - {track['artist']} are None")
+                # Remove not song with not found features
+                tracks.remove(track)
+                data.pop(i)
+                # log it
+                logging.error(f"Features for {track['title']} - {track['artist']} not found")
                 continue
 
             track.set_features(feature)

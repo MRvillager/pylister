@@ -110,7 +110,7 @@ def create_playlist(clusters: List[List[Song]], filename: str) -> None:
     # split filename and extension
     filename, file_extension = os.path.splitext(filename)
     for cluster in clusters:
-        file = f"{filename}.{clusters.index(cluster)}.{file_extension}"  # test.4.m3u
+        file = f"{filename}.{clusters.index(cluster)}{file_extension}"  # test.4.m3u
         playlist = open(file, "w", encoding="utf-8")
 
         for music in cluster:

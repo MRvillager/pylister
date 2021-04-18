@@ -8,7 +8,7 @@ from objects.song import Song
 
 # How many playlist to create
 # TODO: let it choose using stdin
-CLUSTER_N = 7
+CLUSTER_N = 5
 
 
 def cluster(raw_dataset: List[Song]) -> list:
@@ -20,11 +20,16 @@ def cluster(raw_dataset: List[Song]) -> list:
     Returns:
         a clustered list
     """
-    dataset = prepare_data(raw_dataset)
+    raw_dataset, dataset = prepare_data(raw_dataset)
     kmeans = KMeans(n_clusters=CLUSTER_N, random_state=0, n_init=20, tol=1e-06).fit(dataset)
 
     labels = kmeans.labels_
-    out = [[] * CLUSTER_N]
+
+    # Create return list
+    out = []
+    for _ in range(CLUSTER_N):
+        out.append([])
+
     for i in range(len(raw_dataset)):
         j = labels[i]
         out[j].append(raw_dataset[i])
@@ -42,10 +47,12 @@ def prepare_data(songs: List[Song]) -> np.array:
         A numpy array
     """
     raw_dataset = []
+    fixed_songs = []
     for song in songs:
-        try:
+        if song["features"] is None:
+            continue
+        else:
             raw_dataset.append(list(song["features"].items()))
-        except AttributeError:
-            logging.error(f"{song['title']} - {song['artist']} doesn't have a features object")
+            fixed_songs.append(song)
 
-    return np.array(raw_dataset)
+    return fixed_songs, np.array([np.array(dataset) for dataset in raw_dataset])

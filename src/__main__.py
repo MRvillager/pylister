@@ -84,7 +84,7 @@ def run():
     clusters = cluster(songs)
 
     logging.info("Creating playlist")
-    create_playlist(clusters, "../lol.m3u")
+    create_playlist(clusters, "../test/lol.m3u")
 
     logging.info("Complete")
 
