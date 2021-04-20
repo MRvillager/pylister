@@ -1,7 +1,6 @@
 import logging
-import pickle
 import os
-
+import pickle
 from typing import List
 
 # PyLister
@@ -9,7 +8,6 @@ from pylister import api
 from pylister.clustering import cluster
 from pylister.objects.song import Song
 from pylister.utils import load_folder, create_playlist
-
 
 PICKLE = "data.pickle"
 FILENAME = "playlist.m3u"
