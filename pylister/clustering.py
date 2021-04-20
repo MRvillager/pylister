@@ -12,18 +12,19 @@ def cluster(raw_dataset: List[Song], cluster_n: int = 5) -> list:
     Given a list of songs, cluster them using KMeans algorithm
     Args:
         raw_dataset: a list of Song objects
+        cluster_n: how many clusters create
 
     Returns:
         a clustered list
     """
     raw_dataset, dataset = prepare_data(raw_dataset)
-    kmeans = KMeans(n_clusters=CLUSTER_N, random_state=0, n_init=20, tol=1e-06).fit(dataset)
+    kmeans = KMeans(n_clusters=cluster_n, random_state=0, n_init=20, tol=1e-06).fit(dataset)
 
     labels = kmeans.labels_
 
     # Create return list
     out = []
-    for _ in range(CLUSTER_N):
+    for _ in range(cluster_n):
         out.append([])
 
     for i in range(len(raw_dataset)):
