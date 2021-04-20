@@ -1,14 +1,18 @@
 import logging
-import os
 import pickle
+import os
+
 from typing import List
 
-import api
-from clustering import cluster
-from objects.song import Song
-from utils import load_folder, create_playlist
+# PyLister
+from pylister import api
+from pylister.clustering import cluster
+from pylister.objects.song import Song
+from pylister.utils import load_folder, create_playlist
 
-PICKLE = "../dump.pickle"
+
+PICKLE = "data.pickle"
+FILENAME = "playlist.m3u"
 
 
 def load(path: str = None) -> List[Song]:
@@ -22,21 +26,23 @@ def load(path: str = None) -> List[Song]:
     """
     logging.info("Creating dataset")
 
-    # Load and parse files
+    # Get directory from user
     if path is None:
         path = input("Where should I search for music files? ")
+    # Load and parse files
     musics = list(load_folder(path))
     logging.info("Completed files parsing")
 
-    # Search and get Spotify ID from files' metadata
+    # Initialize API
     spotipy = api.API()
+    # Search and get Spotify ID from files' metadata
     for music in musics:
         try:
-            spotipy.search(music, True)
-        except IndexError:
+            spotipy.search(music, True)  # Search using isrc
+        except IndexError:  # Not found
             try:
-                spotipy.search(music)
-            except IndexError:
+                spotipy.search(music)  # Search using artist, title and year
+            except IndexError:  # Not found, again
                 logging.warning(f"{music['title']} - {music['artist']} not found. Skipping {music['path']}")
                 musics.remove(music)
                 continue
@@ -81,14 +87,16 @@ def run():
         songs = load()
 
     logging.info("Clustering")
-    clusters = cluster(songs)
+    cluster_n = int(input("How many playlists to create: "))
+    clusters = cluster(songs, cluster_n)
 
     logging.info("Creating playlist")
-    create_playlist(clusters, "../test/lol.m3u")
+    playlist_dir = input("choose the directory in which to put the playlists: ")
+    create_playlist(clusters, os.path.join(playlist_dir, FILENAME))
 
     logging.info("Complete")
 
 
-if __name__ == "__main__":  # well, it's obvious
+if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     run()

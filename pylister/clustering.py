@@ -6,12 +6,8 @@ from sklearn.cluster import KMeans
 
 from objects.song import Song
 
-# How many playlist to create
-# TODO: let it choose using stdin
-CLUSTER_N = 5
 
-
-def cluster(raw_dataset: List[Song]) -> list:
+def cluster(raw_dataset: List[Song], cluster_n: int = 5) -> list:
     """
     Given a list of songs, cluster them using KMeans algorithm
     Args:
