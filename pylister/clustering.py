@@ -3,10 +3,10 @@ from typing import List
 import numpy as np
 from sklearn.cluster import KMeans
 
-from objects.song import Song
+from .objects.song import Song
 
 
-def cluster(raw_dataset: List[Song], cluster_n: int = 5) -> list:
+def cluster(raw_dataset: List[Song], cluster_n: int = 4) -> list:
     """
     Given a list of songs, cluster them using KMeans algorithm
     Args:
@@ -17,18 +17,18 @@ def cluster(raw_dataset: List[Song], cluster_n: int = 5) -> list:
         a clustered list
     """
     raw_dataset, dataset = prepare_data(raw_dataset)
-    kmeans = KMeans(n_clusters=cluster_n, random_state=0, n_init=20, tol=1e-06).fit(dataset)
-
-    labels = kmeans.labels_
+    kmeans = KMeans(n_clusters=cluster_n, random_state=0, n_init=20, tol=1e-06)
+    kmeans.fit(dataset)
 
     # Create return list
     out = []
     for _ in range(cluster_n):
         out.append([])
 
-    for i in range(len(raw_dataset)):
+    labels = kmeans.labels_
+    for i, music in enumerate(raw_dataset):
         j = labels[i]
-        out[j].append(raw_dataset[i])
+        out[j].append(music)
 
     return out
 

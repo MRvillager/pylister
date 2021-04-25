@@ -5,7 +5,7 @@ from typing import List
 
 import mutagen
 
-from objects.song import Song
+from .objects.song import Song
 
 FILE_FORMATS = [".mp3", ".flac", ".ogg"]
 
@@ -109,8 +109,8 @@ def create_playlist(clusters: List[List[Song]], filename: str) -> None:
     """
     # split filename and extension
     filename, file_extension = os.path.splitext(filename)
-    for cluster in clusters:
-        file = f"{filename}.{clusters.index(cluster)}{file_extension}"  # test.4.m3u
+    for i, cluster in enumerate(clusters):
+        file = f"{filename}.{i}{file_extension}"  # test.4.m3u
         playlist = open(file, "w", encoding="utf-8")
 
         for music in cluster:

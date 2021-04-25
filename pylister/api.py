@@ -5,7 +5,7 @@ from typing import List
 
 from requests import Session, post
 
-from objects.song import Song
+from .objects.song import Song
 
 
 class API:
@@ -20,9 +20,6 @@ class API:
 
     def __init__(self):
         self.session = Session()
-
-        self.key_parse()
-        self.auth()
 
     def __list_split(self, split: list, n: int) -> list:
         """
@@ -52,21 +49,19 @@ class API:
             out += f"{track['spotify_id']},"
         return out[:-1]
 
-    def key_parse(self) -> None:
+    def key_parse(self, keyfile: str) -> None:
         """
         Load the client id and the client secret from the .key file
         Returns:
             None
         """
-        keyname = ".key"
-
-        logging.debug(f"Parsing {keyname}")
-        with open(os.path.join("../", keyname), "r") as keyfile:
+        logging.debug(f"Parsing {keyfile}")
+        with open(keyfile, "r") as keyfile:
             lines = keyfile.readlines()
 
             # File Sanitizing
             if len(lines) != 2:
-                logging.warning(f"{keyname} should have 2 lines")
+                logging.warning(f"{keyfile} should have 2 lines")
 
             for _, line in zip(range(2), lines):
                 if len(line) != 33:  # 32 + \n
@@ -76,12 +71,19 @@ class API:
             self._ID = lines[0].replace("\n", "")
             self._SECRET = lines[1].replace("\n", "")
 
-    def auth(self) -> None:
+    def auth(self, keyfile: str = None) -> "self":
         """
         Get an oauth token from the Spotify Web API
         Returns:
-            None
+            self
         """
+        if keyfile is not None:
+            self.key_parse(keyfile)
+
+        if self._ID is None or self._SECRET is None:
+            logging.error("Client ID and Client Secret cannot be None")
+            raise ValueError("Client ID and Client Secret cannot be None")
+
         auth_str = bytes(f"{self._ID}:{self._SECRET}", 'utf-8')
         auth_b64 = base64.b64encode(auth_str).decode('utf-8')
         headers = {
@@ -95,6 +97,8 @@ class API:
         token_header = {"Authorization": f"Bearer {data['access_token']}"}
 
         self.session.headers = token_header
+
+        return self
 
     def search(self, track: Song, isrc: bool = False) -> None:
         """
@@ -159,8 +163,7 @@ class API:
 
         data = response.json()["audio_features"]
 
-        for track in tracks:
-            i = tracks.index(track)
+        for i, track in enumerate(tracks):
             feature = data[i]
 
             if feature is None:

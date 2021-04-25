@@ -11,6 +11,7 @@ from pylister.utils import load_folder, create_playlist
 
 PICKLE = "data.pickle"
 FILENAME = "playlist.m3u"
+KEYFILE = ".key"
 
 
 def load(path: str = None) -> List[Song]:
@@ -32,7 +33,7 @@ def load(path: str = None) -> List[Song]:
     logging.info("Completed files parsing")
 
     # Initialize API
-    spotipy = api.API()
+    spotipy = api.API().auth(keyfile=KEYFILE)
     # Search and get Spotify ID from files' metadata
     for music in musics:
         try:
