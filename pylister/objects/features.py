@@ -3,18 +3,26 @@ from typing import Union
 
 
 class Feature:
+    # Mood
     _danceability = None
+    _valence = None
     _energy = None
+    _tempo = None
+
+    # Properties
     _loudness = None
     _speechiness = None
-    _acousticness = None
     _instrumentalness = None
+
+    # Context
+    _acousticness = None
     _liveness = None
-    _valence = None
-    _tempo = None
 
     _keys = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness',
              'liveness', 'valence', 'tempo']
+    _mood = ['danceability', 'valence', 'energy', 'tempo']
+    _properties = ['loudness', 'speechiness', 'instrumentalness']
+    _context = ['acousticness', 'liveness']
 
     def __init__(self, danceability: float, energy: float, loudness: float, speechiness: float,
                  acousticness: float, instrumentalness: float, liveness: float, valence: float, tempo: float):
@@ -51,7 +59,7 @@ class Feature:
         logging.warning(f"{key} not found")
         raise KeyError(f"{key} not found")
 
-    def __getitem__(self, key: str) -> int:
+    def __getitem__(self, key: str) -> Union[int, list]:
         """
         Returns an item given the key
         Args:
@@ -60,10 +68,16 @@ class Feature:
         Returns:
             the value requested
         """
-        if key not in self._keys:
-            return self.__missing__(key)
-
-        return self.__dict__[f"_{key}"]
+        if key == "mood":
+            return self.mood()
+        elif key == "properties":
+            return self.properties()
+        elif key == "context":
+            return self.context()
+        elif key not in self._keys:
+            self.__missing__(key)
+        else:
+            return self.__dict__[f"_{key}"]
 
     def __setitem__(self, key, value: str) -> None:
         """
@@ -98,6 +112,49 @@ class Feature:
             The list containing the items
         """
         for key in self._keys:
+            yield self.__dict__[f"_{key}"]
+
+    def mood(self) -> list:
+        """
+        Get a list of all the mood-based items available
+        Returns:
+            The list containing the items
+        """
+        for key in self._mood:
+            yield self.__dict__[f"_{key}"]
+
+    def properties(self) -> list:
+        """
+        Get a list of all properties available
+        Returns:
+            The list containing the items
+        """
+        for key in self._properties:
+            yield self.__dict__[f"_{key}"]
+
+    def group(self, keys: list) -> list:
+        """
+        Get a custom list of items
+        Args:
+            keys: a list of keys of items
+
+        Returns:
+            The list containing the items
+        """
+
+        for key in keys:
+            if key not in self._keys:
+                self.__missing__(key)
+
+            yield self.__dict__[f"_{key}"]
+
+    def context(self) -> list:
+        """
+        Get a list of all properties available
+        Returns:
+            The list containing the items
+        """
+        for key in self._context:
             yield self.__dict__[f"_{key}"]
 
 

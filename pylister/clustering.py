@@ -6,17 +6,18 @@ from sklearn.cluster import KMeans
 from .objects.song import Song
 
 
-def cluster(raw_dataset: List[Song], cluster_n: int = 4) -> list:
+def cluster(raw_dataset: List[Song], cluster_n: int = 4, mode: list = None) -> list:
     """
     Given a list of songs, cluster them using KMeans algorithm
     Args:
         raw_dataset: a list of Song objects
         cluster_n: how many clusters create
+        mode: the feature(s) to use for clustering
 
     Returns:
         a clustered list
     """
-    raw_dataset, dataset = prepare_data(raw_dataset)
+    raw_dataset, dataset = prepare_data(raw_dataset, mode)
     kmeans = KMeans(n_clusters=cluster_n, random_state=0, n_init=20, tol=1e-06)
     kmeans.fit(dataset)
 
@@ -33,11 +34,12 @@ def cluster(raw_dataset: List[Song], cluster_n: int = 4) -> list:
     return out
 
 
-def prepare_data(songs: List[Song]) -> np.array:
+def prepare_data(songs: List[Song], mode: list) -> np.array:
     """
     Transform features of songs into a numpy array
     Args:
         songs: a list of Song objects
+        mode: the feature(s) to use for creating the dataset
 
     Returns:
         A numpy array
@@ -48,7 +50,11 @@ def prepare_data(songs: List[Song]) -> np.array:
         if song["features"] is None:
             continue
         else:
-            raw_dataset.append(list(song["features"].items()))
+            if mode is None:
+                raw_dataset.append(list(song["features"].items()))
+            else:
+                raw_dataset.append(list(song["features"].group(mode)))
+
             fixed_songs.append(song)
 
     return fixed_songs, np.array([np.array(dataset) for dataset in raw_dataset])

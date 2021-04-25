@@ -86,11 +86,10 @@ def run():
         songs = load()
 
     logging.info("Clustering")
-    cluster_n = int(input("How many playlists to create: "))
-    clusters = cluster(songs, cluster_n)
+    clusters = cluster(songs, mode=["energy", "danceability", "tempo"])
 
     logging.info("Creating playlist")
-    playlist_dir = input("choose the directory in which to put the playlists: ")
+    playlist_dir = input("Out dir: ")
     create_playlist(clusters, os.path.join(playlist_dir, FILENAME))
 
     logging.info("Complete")
