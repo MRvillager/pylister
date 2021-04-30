@@ -1,11 +1,10 @@
 import base64
 import logging
-import os
 from typing import List
 
 from requests import Session, post
 
-from .objects.song import Song
+from pylister.song import Song
 
 
 class API:

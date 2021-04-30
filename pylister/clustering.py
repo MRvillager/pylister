@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 from sklearn.cluster import KMeans
 
-from .objects.song import Song
+from pylister.song import Song
 
 
 def cluster(raw_dataset: List[Song], cluster_n: int = 4, mode: list = None) -> list:

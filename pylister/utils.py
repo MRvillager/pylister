@@ -5,7 +5,7 @@ from typing import List
 
 import mutagen
 
-from .objects.song import Song
+from pylister.song import Song
 
 FILE_FORMATS = [".mp3", ".flac", ".ogg"]
 
