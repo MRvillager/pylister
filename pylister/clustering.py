@@ -1,9 +1,8 @@
-from typing import List
-
 import numpy as np
+from typing import List
 from sklearn.cluster import KMeans
 
-from pylister.song import Song
+from .song import Song
 
 
 def cluster(raw_dataset: List[Song], cluster_n: int = 4, mode: list = None) -> list:

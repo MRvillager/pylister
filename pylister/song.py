@@ -24,7 +24,7 @@ class Song:
         "isrc",
         "path",
         "spotify_id",
-        "features",
+        "features"
     ]
 
     def __init__(self, title: str, artist: str, album: str, year: Union[str, int], isrc: str, path: str,

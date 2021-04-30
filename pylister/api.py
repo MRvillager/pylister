@@ -1,7 +1,6 @@
 import base64
 import logging
 from typing import List
-
 from requests import Session, post
 
 from pylister.song import Song
@@ -46,7 +45,7 @@ class API:
         out = ""
         for track in tracks:
             out += f"{track['spotify_id']},"
-        return out[:-1]
+        return out[:-1]  # removes the trailing comma
 
     def key_parse(self, keyfile: str) -> None:
         """
@@ -174,24 +173,3 @@ class API:
                 continue
 
             track.set_features(feature)
-
-    def analysis(self, track: Song) -> None:
-        """
-        Get the audio analysis for a track
-        Args:
-            track: the Song Object representing the track to analyse
-
-        Returns:
-            None
-        """
-        url = f"{self._ANALYSIS_URL}{track['spotify_id']}"
-
-        response = self.session.get(url=url)
-        if response.status_code != 200:
-            logging.warning(f"Analysis request failed. Status = {response.status_code} - Url = {url} - Response = "
-                            f"{response.content}")
-            raise ValueError(f"Analysis request failed.")
-
-        data = response.json()["track"]
-
-        track["analysis"] = data  # TODO: Analysis object

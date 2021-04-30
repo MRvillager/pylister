@@ -1,11 +1,10 @@
-import logging
 import os
 import re
+import logging
+import mutagen
 from typing import List
 
-import mutagen
-
-from pylister.song import Song
+from .song import Song
 
 FILE_FORMATS = [".mp3", ".flac", ".ogg"]
 
