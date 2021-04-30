@@ -219,4 +219,4 @@ cython_debug/
 /test/files
 .key
 dump.pickle
-lol.m3u
+data.pickle
