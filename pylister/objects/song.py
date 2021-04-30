@@ -1,7 +1,6 @@
 import logging
 from typing import Union
 
-from .analysis import Analysis
 from .features import Feature
 
 
@@ -16,7 +15,6 @@ class Song:
     _spotify_id = None
 
     _features = None
-    _analysis = None
 
     _keys = [
         "title",
@@ -27,11 +25,10 @@ class Song:
         "path",
         "spotify_id",
         "features",
-        "analysis",
     ]
 
     def __init__(self, title: str, artist: str, album: str, year: Union[str, int], isrc: str, path: str,
-                 spotify_id: str = None, features: Feature = None, analysis: Analysis = None):
+                 spotify_id: str = None, features: Feature = None):
 
         self._title = title
         self._artist = artist
@@ -43,7 +40,6 @@ class Song:
         self._spotify_id = spotify_id
 
         self._features = features
-        self._analysis = analysis
 
     def __doc__(self):
         return "This object is used to store the metadata of music files and their path on the pc and on spotify"
